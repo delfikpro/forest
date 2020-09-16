@@ -1,0 +1,28 @@
+apply plugin: 'java'
+
+group 'forest'
+version '3.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    implementation 'org.codehaus.groovy:groovy:3.0.5'
+    implementation 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
+}
+
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    manifest {
+        attributes 'Main-Class': 'forest.App'
+    }
+}
