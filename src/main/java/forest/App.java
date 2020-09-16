@@ -2,13 +2,14 @@ package forest;
 
 import groovy.lang.*;
 import groovy.util.Expando;
-import groovy.util.GroovyScriptEngine;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import lombok.SneakyThrows;
 import lombok.val;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.*;
 
 @SuppressWarnings ({"rawtypes", "unchecked"})
@@ -20,11 +21,11 @@ public class App {
 	public static final GroovyClassLoader classLoader = new GroovyClassLoader(App.class.getClassLoader());
 	public static final Expando environment = new Expando();
 	public static final List<File> contentRoots = new ArrayList<>();
+	public static int portRangeStart = 6000;
+	public static String realmArg;
 	public static File workingDir = new File(".");
 
 	public static void main(String[] args) {
-
-
 
 		OptionParser parser = new OptionParser();
 
@@ -40,7 +41,7 @@ public class App {
 			System.out.println("You must specify the realm address, for example:\n    forest BW-1");
 			return;
 		}
-		String realmArg = String.valueOf(objects.get(0));
+		realmArg = String.valueOf(objects.get(0));
 		String realmString;
 		int realmId;
 		if (realmArg.contains("-TEST")) {
@@ -74,6 +75,8 @@ public class App {
 		binding.setVariable("java", new Bindings.java());
 		binding.setVariable("resourcePath", new Bindings.resourcePath());
 		binding.setVariable("resourceCopy", new Bindings.resourceCopy());
+		binding.setVariable("requirePort", new Bindings.requirePort());
+		binding.setVariable("portRangeStart", new Bindings.portRangeStart());
 
 		File configDir = options.has(configOption) ? new File(options.valueOf(configOption)) : new File("config");
 
@@ -102,7 +105,6 @@ public class App {
 			}
 		}
 
-
 		try {
 			preset.call();
 		} catch (Exception ex) {
@@ -114,7 +116,7 @@ public class App {
 
 	public static void runCommand(Command command) {
 		String[] unixArgs = command.getUnixArgs();
-		System.out.println(String.join(" ", unixArgs));
+//		System.out.println(String.join(" ", unixArgs));
 		try {
 			ProcessBuilder builder = new ProcessBuilder(unixArgs).directory(workingDir);
 			environment.getProperties().forEach((k, v) -> builder.environment().put(String.valueOf(k), String.valueOf(v)));
@@ -127,6 +129,26 @@ public class App {
 			throwable.printStackTrace();
 			System.exit(0);
 		}
+	}
+
+	@SneakyThrows
+	public static int requirePort() {
+		File ports = new File(workingDir.getParentFile(), "ports");
+		if (!ports.exists()) {
+			ports.createNewFile();
+			Files.write(ports.toPath(), Arrays.asList(realmArg));
+			return portRangeStart;
+		}
+		List<String> lines = new ArrayList<>(Files.readAllLines(ports.toPath()));
+		val iterator = lines.iterator();
+		int port = portRangeStart;
+		while (iterator.hasNext()) {
+			if (iterator.next().equals(realmArg)) return port;
+			port++;
+		}
+		lines.add(realmArg);
+		Files.write(ports.toPath(), lines);
+		return port;
 	}
 
 	private static void readConfigDir(File configDir) {

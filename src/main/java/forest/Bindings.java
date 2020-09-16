@@ -35,6 +35,22 @@ public class Bindings {
 
 	}
 
+	public static class requirePort {
+
+		public int call() {
+			return App.requirePort();
+		}
+
+	}
+
+	public static class portRangeStart {
+
+		public void call(int port) {
+			App.portRangeStart = port;
+		}
+
+	}
+
 	public static class resourceCopy {
 
 		public void call(String source) {

@@ -26,7 +26,7 @@ public class Java implements Command {
 		this.heapSize("-Xms", this.initialHeap, args);
 		this.heapSize("-Xmx", this.maxHeap, args);
 		args.add("-cp");
-		args.add(String.join(System.getProperty("os.name").toLowerCase().contains("win") ? ";" : ";", classPath));
+		args.add(String.join(":", classPath));
 		args.add(mainClass);
 		if (this.arguments != null) args.addAll(arguments);
 		return args.toArray(new String[0]);
