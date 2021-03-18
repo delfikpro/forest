@@ -1,41 +1,59 @@
 package forest;
 
-import lombok.Builder;
-import lombok.Data;
+import java.util.Arrays;
+import java.util.Collection;
 
-import java.util.ArrayList;
-import java.util.List;
+public interface Java extends Executable {
 
-@Data
-@Builder
-public class Java implements Command {
-
-	@Builder.Default
-	private final String path = "java";
-
-	private final Object initialHeap;
-	private final Object maxHeap;
-	private final List<String> classPath;
-	private final String mainClass;
-	private final List<String> arguments;
-
-	@Override
-	public String[] getUnixArgs() {
-		List<String> args = new ArrayList<>();
-		args.add(this.path);
-		this.heapSize("-Xms", this.initialHeap, args);
-		this.heapSize("-Xmx", this.maxHeap, args);
-		args.add("-cp");
-		args.add(String.join(":", classPath));
-		args.add(mainClass);
-		if (this.arguments != null) args.addAll(arguments);
-		return args.toArray(new String[0]);
+	default void javaPath(String path) {
+		setJavaPath(path);
 	}
 
-	private void heapSize(String argument, Object value, List<String> buffer) {
-		if (value instanceof Number) buffer.add(argument + value.toString() + "M");
-		else if (value instanceof String) buffer.add(argument + value);
-		else if (value != null) System.out.println("Weird memory object: " + value);
+	void setJavaPath(String path);
+
+	String getJavaPath();
+
+	default void mainClass(String mainClass) { setMainClass(mainClass);}
+
+	void setMainClass(String mainClass);
+
+	String getMainClass();
+
+
+	default void arguments(Object... arguments) {
+		getArguments().addAll(Arrays.asList(arguments));
 	}
+
+	void setArguments(Collection<Object> arguments);
+
+	Collection<Object> getArguments();
+
+
+	default void jvmArgs(Object... arguments) {
+		getJvmArgs().addAll(Arrays.asList(arguments));
+	}
+
+	void setJvmArgs(Collection<Object> arguments);
+
+	Collection<Object> getJvmArgs();
+
+
+	default void xmx(String xmx) {
+		jvmArgs("Xmx", xmx);
+	}
+
+	default void xms(String xms) {
+		jvmArgs("Xms", xms);
+	}
+
+
+	default void classpath(Object... arguments) {
+		getClasspath().addAll(Arrays.asList(arguments));
+	}
+
+	void setClasspath(Collection<Object> arguments);
+
+	Collection<Object> getClasspath();
+
 
 }

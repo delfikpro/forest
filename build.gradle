@@ -1,7 +1,8 @@
 apply plugin: 'java'
+apply plugin: 'groovy'
 
 group 'forest'
-version '3.0'
+version '4.0.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -14,15 +15,23 @@ repositories {
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
-    implementation 'org.codehaus.groovy:groovy:3.0.5'
+
     implementation 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
+    implementation 'org.codehaus.groovy:groovy:3.0.5'
+    testImplementation 'org.codehaus.groovy:groovy:3.0.5'
+
 }
 
 jar {
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
     manifest {
         attributes 'Main-Class': 'forest.App'
+    }
+}
+
+task fatJar(type: Jar) {
+    archiveAppendix.set "fat"
+    from jar
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
