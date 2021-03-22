@@ -96,7 +96,8 @@ public class App {
 		List<String> roots = options.valuesOf(rootOption);
 
 		String realmDirPath = options.valueOf(realmDirOption);
-		File realmDir = realmDirPath.startsWith("/") ? new File(realmDirPath) : new File(forestDir, realmDirPath);
+		File realmDir = new File(realmDirPath.startsWith("/") ? new File(realmDirPath) : new File(forestDir, realmDirPath), realmArg);
+		realmDir.mkdirs();
 
 		File internalsDir = new File(forestDir, ".forest");
 		internalsDir.mkdirs();
@@ -117,12 +118,14 @@ public class App {
 			}
 		} else {
 			for (val entry : context.getMappings().entrySet()) {
-				if (Pattern.compile(entry.getValue()).matcher(realmArg).matches()) {
-					preset = context.getPresets().get(entry.getKey());
-					if (preset == null) System.out.println("Unable to find mapped preset '" + entry.getKey() + "'");
-					else {
-						System.out.println("Using preset: " + entry.getKey());
-						break;
+				for (String pattern : entry.getValue()) {
+					if (Pattern.compile(pattern).matcher(realmArg).matches()) {
+						preset = context.getPresets().get(entry.getKey());
+						if (preset == null) System.out.println("Unable to find mapped preset '" + entry.getKey() + "'");
+						else {
+							System.out.println("Using preset: " + entry.getKey());
+							break;
+						}
 					}
 				}
 			}

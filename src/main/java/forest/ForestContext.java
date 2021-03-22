@@ -3,6 +3,7 @@ package forest;
 import groovy.lang.Closure;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -42,8 +43,14 @@ public interface ForestContext extends JavaContext {
 
 	void preset(Map<String, Closure<?>> preset);
 
-	void map(Map<String, String> mappings);
+	To map(String... mappings);
 
-	Map<String, String> getMappings();
+	interface To {
+		void to(String preset);
+	}
+
+	Map<String, List<String>> getMappings();
+
+	void execute(String... command);
 
 }

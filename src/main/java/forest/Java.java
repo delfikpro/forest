@@ -39,11 +39,11 @@ public interface Java extends Executable {
 
 
 	default void xmx(String xmx) {
-		jvmArgs("Xmx", xmx);
+		jvmArgs("-Xmx" + xmx);
 	}
 
 	default void xms(String xms) {
-		jvmArgs("Xms", xms);
+		jvmArgs("-Xms" + xms);
 	}
 
 

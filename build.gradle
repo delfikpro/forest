@@ -30,7 +30,7 @@ jar {
 
 task fatJar(type: Jar) {
     archiveAppendix.set "fat"
-    from jar
+    with jar
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }

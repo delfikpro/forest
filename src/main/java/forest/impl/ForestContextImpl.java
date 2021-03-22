@@ -11,10 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Getter
@@ -26,7 +24,7 @@ public class ForestContextImpl implements ForestContext {
 	private final PortManager portManager = new ForestPortManager(this);
 	private final Map<String, Object> env = new HashMap<>();
 	private final Map<String, Closure> presets = new HashMap<>();
-	private final Map<String, String> mappings = new HashMap<>();
+	private final Map<String, List<String>> mappings = new HashMap<>();
 	private final List<String> contentRoots;
 
 	private final File forestDir;
@@ -83,7 +81,7 @@ public class ForestContextImpl implements ForestContext {
 	}
 
 	public void resourceCopy(String source) {
-		resourceCopy(source, ".");
+		resourceCopy(source, "");
 	}
 
 	public void resourceCopy(String source, String destination) {
@@ -98,6 +96,9 @@ public class ForestContextImpl implements ForestContext {
 				copy(file, new File(dst, file.getName()));
 			}
 		} else try {
+			if (dst.isDirectory()) {
+				dst = new File(dst, src.getName());
+			}
 			dst.getParentFile().mkdirs();
 			Files.copy(src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
@@ -135,8 +136,24 @@ public class ForestContextImpl implements ForestContext {
 	}
 
 	@Override
-	public void map(Map<String, String> mappings) {
-		this.mappings.putAll(mappings);
+	public To map(String... mappings) {
+		return preset -> this.mappings.computeIfAbsent(preset, s -> new ArrayList<>()).addAll(Arrays.asList(mappings));
+	}
+
+	@Override
+	public void execute(String... command) {
+		if (command.length == 0) return;
+		if (command.length == 1) {
+			Pattern pattern = Pattern.compile("((?:(?:[^ \"\\\\]|\\\\.)*\"(?:[^\"\\\\]|\\\\.)*\"(?:[^ \"\\\\]|\\\\.)*)+|\\S+)");
+			Matcher matcher = pattern.matcher(command[0]);
+			List<String> args = new ArrayList<>();
+			while (matcher.find()) {
+				args.add(matcher.group(1));
+			}
+			execute(new SimpleExecutable(args.toArray(new String[0])));
+		} else {
+			execute(new SimpleExecutable(command));
+		}
 	}
 
 }
