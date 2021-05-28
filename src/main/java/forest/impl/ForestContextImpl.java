@@ -132,7 +132,11 @@ public class ForestContextImpl implements ForestContext {
 	}
 
 	public void preset(Map<String, Closure<?>> preset) {
-		presets.putAll(preset);
+		for (Map.Entry<String, Closure<?>> entry : preset.entrySet()) {
+			if (presets.containsKey(entry.getKey()))
+				throw new ForestException("Duplicate preset: '" + entry.getKey() + "'");
+			presets.put(entry.getKey(), entry.getValue());
+		}
 	}
 
 	@Override
