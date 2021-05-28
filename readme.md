@@ -10,8 +10,8 @@ Run `forest HELLO-1` to verify your installation!
 ```shell
 mkdir ~/forest
 cd ~/forest
-wget https://github.com/delfikpro/forest/releases/download/4.0.0/forest-4.0.0.zip
-unzip forest-4.0.0.zip
+wget https://github.com/delfikpro/forest/releases/download/4.0.1/forest-distr.zip
+unzip forest-distr.zip
 source executeme.sh
 ```
 ### Usage

@@ -5,7 +5,7 @@ if [ -z ${FOREST_HOME+x} ]; then
   exit
 fi
 
-java -cp "$FOREST_HOME/forest-fat-4.0.0.jar" forest.App -f "$FOREST_HOME" -c presets \
+java -cp "$FOREST_HOME/forest-fat.jar" forest.App -f "$FOREST_HOME" -c presets \
 -d "$FOREST_HOME/resources-bin" \
 -d "$FOREST_HOME/resources-text" \
 "$@"
