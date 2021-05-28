@@ -3,7 +3,7 @@
 ### Installation
 
 Download and extract the [latest release](https://github.com/delfikpro/forest/releases).  
-Run `executeme.sh` to add forest commands into your `PATH` variable.
+Run `source executeme.sh` to add forest commands into your `PATH` variable.
 
 Run `forest HELLO-1` to verify your installation!
 
