@@ -1,4 +1,6 @@
 
+[[ "${BASH_SOURCE[0]}" != "${0}" ]] || (printf "\nPlease run this script via source command:\n source executeme.sh\n\n" && exit 1)
+
 FOREST_HOME_NEW="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 chmod +x "$FOREST_HOME_NEW/forest"
