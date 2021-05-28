@@ -7,6 +7,13 @@ Run `source executeme.sh` to add forest commands into your `PATH` variable.
 
 Run `forest HELLO-1` to verify your installation!
 
+```shell
+mkdir ~/forest
+cd ~/forest
+wget https://github.com/delfikpro/forest/releases/download/4.0.0/forest-4.0.0.zip
+unzip forest-4.0.0.zip
+source executeme.sh
+```
 ### Usage
 
 Command `forest [realm id]` creates a realm (or uses existing) and launches it.  
