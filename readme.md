@@ -1,69 +1,71 @@
 # Forest
 
-### Установка
+### Installation
 
-Скачайте и запустите `install-forest.sh` из последнего релиза.
+Download and extract the [latest release](https://github.com/delfikpro/forest/releases).  
+Run `executeme.sh` to add forest commands into your `PATH` variable.
 
-### Использование
+Run `forest HELLO-1` to verify your installation!
 
-Команда `forest [Реалм]` исполняет пресет.  
-Пресет можно указать аргументом `--preset`, либо используя метод `map` в конфигурации.
+### Usage
 
-Команда `berry` запускает `forest` в бесконечном цикле.  
+Command `forest [realm id]` creates a realm (or uses existing) and launches it.  
+Example realm ids: `MC-1`, `MC-2`, `MC-TEST-1`, `OWO-777`
 
-### Конфигурация
+You can specify preset manually using `--preset`, or by calling `map ... to ...` method.
 
-В папке `presets` содержатся конфиги на языке groovy.
+You can use `berry` command to repeatedly restart `forest`  
 
-Основные методы в конфигах - `preset` и `map`.
+### Configuration
+
+The `presets` directory contains `.groovy` configs.
 
 ```groovy
 preset somePreset: {
 
-    // Копирует файл someResource.jar из папки ресурсов в папку сервера
+    // Copies someResource.jar from resources directory into local realm folder
     resourceCopy 'someResource.jar' 
     
-    // Копировать файл someArchive.tar и меняет название
+    // Copies someArchive.tar while changing the name
     resourceCopy 'someArchive.tar', 'test/archive.tar'
     
-    // Выполнить команду
+    // Executes shell command (inside is realm dir)
     execute 'tar xf test/archive.tar'
     
-    // Выполнить команду java
+    // Executes java command
     java {
         
-        // Указать путь к джаве (стандартный - 'java')
+        // Java executable path (default is 'java')
         javaPath '/home/user/java-6/bin/java'
         
-        // Добавить аргументы JVM
         jvmArgs '-Djava.library.path=natives', '-XX:MaxPermSize=64M'
         
-        // Короткие методы для -Xmx и -Xms
+        // Shortcuts for -Xmx and -Xms
         xmx '128M'
         xms '8M'
         
-        // Добавить аргументы софта
+        // Program arguments
         arguments '--someArgument'
         
-        // Добавить classpath
+        // Add resource from realm dir to classpath
         classpath 'someResource.jar'
-        // Ресурсы для classpath необязательно копировать
+        // Add resource from global resources dir to classpath without copying
         classpath resource('otherResource.jar')
-        
-        // Главный класс
+       
+        // Java program entrypoint
         mainClass 'com.example.seriouscompany.seriousapplication.App'
         
     }
     
-    // Удалить файлы
+    // Deletes files/directories
     delete 'tmp'
     
 }
 
-// Добавить автоматический маппинг TEST-1 к пресету somePreset
-// Чтобы не нужно было писать forest --preset somePreset TEST-1
+// Add automatic mapping for realm 'TEST-1' to preset 'somePreset'
+// So that you can write 'forest TEST-1' without specifying the --preset flag
 map 'TEST-1' to 'somePreset'
 
-// map поддерживает regex
+// Mappings do support regular expressions.
 map 'TEST-.+' to 'somePreset'
 ```

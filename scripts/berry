@@ -1,0 +1,17 @@
+#!/bin/sh
+
+stty -echoctl
+
+while true; do
+
+	echo "If you want to rip the berry off, you have 1 second to press ^C:"
+	# trap "exit" INT
+	trap - INT
+	sleep 1;
+
+	trap "echo Restarting the berry..." INT
+	echo "Growing the berry..."
+
+	forest "$@"
+
+done;
